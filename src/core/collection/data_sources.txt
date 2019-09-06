@@ -1,0 +1,23 @@
+25 = https://www.kaggle.com/c/liberty-mutual-group-property-inspection-prediction/data
+70 = https://www.kaggle.com/c/santander-customer-satisfaction/data
+61 = https://www.kaggle.com/c/home-depot-product-search-relevance/data
+13 = https://www.kaggle.com/c/crowdflower-search-relevance/data
+66 = https://www.kaggle.com/c/bnp-paribas-cardif-claims-management/data
+29 = https://www.kaggle.com/c/flavours-of-physics/data
+24 = https://www.kaggle.com/c/caterpillar-tube-pricing/data
+12 = https://www.kaggle.com/c/predict-west-nile-virus/data
+40 = https://www.kaggle.com/c/rossmann-store-sales/data
+
+
+# Partially downloaded...
+23 = https://www.kaggle.com/c/grasp-and-lift-eeg-detection/data
+41 = https://www.kaggle.com/c/homesite-quote-conversion/data
+38 = https://www.kaggle.com/c/whats-cooking/data
+44 = https://www.kaggle.com/c/prudential-life-insurance-assessment/data
+68 = https://www.kaggle.com/c/march-machine-learning-mania-2016/data
+9 = https://www.kaggle.com/c/otto-group-product-classification-challenge/data
+33 = https://www.kaggle.com/c/springleaf-marketing-response/data
+85 = https://www.kaggle.com/c/avito-duplicate-ads-detection/data
+78 = https://www.kaggle.com/c/expedia-hotel-recommendations/data
+20 = https://www.kaggle.com/c/avito-context-ad-clicks/data
+7 = https://www.kaggle.com/c/forest-cover-type-prediction/data

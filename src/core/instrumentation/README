@@ -1,0 +1,2 @@
+Instrument Python scripts (from Kaggle) to add calls to dynamic functions recording
+calls and arguments, along with things like memory location.

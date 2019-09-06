@@ -1,0 +1,1 @@
+python3 -u collect_data.py 2>&1 | tee  -a log.txt

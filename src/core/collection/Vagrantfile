@@ -1,0 +1,64 @@
+# Basic VM configuration
+
+require "set"
+
+VAGRANT_BOX = "ubuntu/xenial64"
+VM_NAME = 'crowdlearn'
+# in MB
+VM_MEMORY = 100000
+VM_DISK = '120GB'
+VM_CPUS = 8
+
+
+# very basic, since we can just ssh after to setup environment as needed
+Vagrant.configure(2) do |config|
+  config.vm.box = VAGRANT_BOX
+  config.vm.hostname = VM_NAME
+  # set up disk size (this requires the vagrant-disksize plugin)
+  config.disksize.size = VM_DISK
+
+  config.vm.synced_folder ".", ".", create: false, disabled: true
+
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui    = false
+    vb.name   = VM_NAME
+    vb.cpus   = VM_CPUS
+    vb.memory = VM_MEMORY
+    # remove logging that ubuntu/xenial64 box does by default
+    vb.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
+  end
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y git vim build-essential
+    apt-get install -y python python3-pip
+    pip3 install ipython
+    # installing docker
+    apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+   apt-get update
+   apt-get install -y docker-ce
+   # add default user to docker group, to avoid having to call with sudo
+   gpasswd --add vagrant docker
+   # install zip
+   apt-get install -y zip
+  SHELL
+
+  # copy in folder for transfer stuff/data
+  config.vm.provision "file", source: "/raid/jcamsan/crowdlearn.zip", destination:"$HOME/crowdlearn.zip"
+
+  # unzip and prepare for the docker builder
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    unzip ${HOME}/crowdlearn.zip -d ${HOME}/
+  SHELL
+
+
+end
