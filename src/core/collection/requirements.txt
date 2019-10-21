@@ -5,4 +5,4 @@ astunparse
 jinja2
 scikit-learn==0.18
 keras==2.0.9
-nltk==3.2.5
+nltk==3.4.5
