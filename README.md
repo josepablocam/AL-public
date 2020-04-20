@@ -25,6 +25,29 @@ pip install -r requirements.txt
 popd
 ```
 
+# Docker container
+Some people have had issues using the install suggested above,
+particularly they encounter issues relating to `xgboost`. To address this,
+users can instead build a docker container for AL. We refer the
+user to https://www.docker.com/ for information on how to install docker.
+
+Once docker is installed, the container can be built by running
+
+```
+docker build . -t al-container
+
+```
+
+And it can be launched by running
+
+```
+docker run -it -rm al-container
+```
+
+which launches a (temporary) container with `bash` as an entry point.
+You can then launch the `python` interpreter and import AL following
+the steps in the next subsection.
+
 # Using AL
 
 You can import `al` from `src/core` for use.
