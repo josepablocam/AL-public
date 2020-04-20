@@ -8,13 +8,14 @@ import logging
 
 import numpy as np
 import pandas as pd
+import scipy
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 import tqdm
 
 from synthesis.generate import ProgramGenerator
 from synthesis.learn import NGramCallScorer
-from synthesis.program import run_with_timeout_in_separate_process
+from synthesis.program import run_with_timeout_in_thread
 
 # starts sampling after this many rows
 MAX_NUM_ROWS = 10000
@@ -36,7 +37,6 @@ def wrapped_f1_score(y_true, y_pred, average='macro'):
         return f1_score(y_true, y_pred, average=average)
     except:
         return 0
-
 
 
 def subsample_data(X, y, seed=42):
@@ -62,15 +62,15 @@ def subsample_data(X, y, seed=42):
 
 def prune_ill_pipelines(progs, X, y):
     fitted_progs = []
-    fitted_pbar = tqdm.tqdm(total=len(progs))
     for p in tqdm.tqdm(progs):
         # use variant of timeout that spins up separate process for this
         # seems to work, version with stopit.ThreadingTimeout doesn't
         # interrupt atomic ops and hangs here often
         try:
-            fitted_p = run_with_timeout_in_separate_process(
+            fitted_p = run_with_timeout_in_thread(
                 MAX_FINAL_FIT_MINS * 60, p.fit_final, X, y)
         except TimeoutError:
+            print("Timedout fitting final dataset")
             fitted_p = None
         if fitted_p is not None:
             # only include pipelines where can call predict at the end
@@ -125,23 +125,6 @@ def predict_proba_ensemble(programs, X):
     # normalize these to one
     return probs / probs.sum(axis=1).reshape(-1, 1)
 
-    if task == "classification":
-        metric = wrapped_f1_score
-    else:
-        metric = r2_score
-
-    pruned_generator = ProgramGenerator(
-        predictor,
-        X_train,
-        y_train,
-        X_val,
-        y_val,
-        depth=depth,
-        beam=beam,
-        timeout=timeout,
-        metric=metric,
-    )
-
 
 class AL(object):
     def __init__(
@@ -168,7 +151,7 @@ class AL(object):
         if self.task_type == "classification":
             metric = wrapped_f1_score
         else:
-            metrics = None
+            metric = None
 
         generator = ProgramGenerator(
             self.predictor,
@@ -182,7 +165,7 @@ class AL(object):
             metric=metric,
         )
         progs = generator.generate()
-        self.programs = prune_ill_pipelines(progs, X, y)
+        self.programs = prune_ill_pipelines(progs, orig_X, orig_y)
         return self
 
     def get_programs(self):
