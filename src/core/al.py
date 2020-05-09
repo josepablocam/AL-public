@@ -166,12 +166,19 @@ class AL(object):
         )
         progs = generator.generate()
         self.programs = prune_ill_pipelines(progs, orig_X, orig_y)
+        # re-fit the programs on the entire training data
+        fully_trained = []
+        print("Fitting programs found on entire training set")
+        for p in tqdm.tqdm(self.programs):
+            full_fit_p = p.fit_final(X, y)
+            fully_trained.append(full_fit_p)
+        self.programs = fully_trained
         return self
 
     def get_programs(self):
         return self.programs
 
-    def predict(self, X, index=None):
+    def predict(self, X, index=0):
         if index is None:
             return predict_ensemble(self.programs, X)
         else:
